@@ -1,12 +1,12 @@
 # Name your project! Project names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
-name: pc_dbt_cloud_demo
+name: data_analytics
 version: "1.0.0"
 config-version: 2
 
 # This setting configures which "profile" dbt uses for this project.
-profile: pc_dbt_cloud_demo
+profile: data_analytics
 
 # These configurations specify where dbt should look for different types of files.
 # The `model-paths` config, for example, states that models in this project can be
@@ -30,7 +30,7 @@ clean-targets: ["target", "dbt_packages"] # directories to be removed by `dbt cl
 # continue to be built as views. These settings can be overridden in the individual model files
 # using the `{{ config(...) }}` macro.
 models:
-  pc_dbt_cloud_demo:
+  data_analytics:
     staging:
       +transient: false
       +materialized: view
@@ -41,16 +41,16 @@ models:
       +schema: "{{env_var('DBT_TARGET_SCHEMA')}}"
 
 seeds:
-  pc_dbt_cloud_demo:
+  data_analytics:
     +transient: false
     +schema: "{{env_var('DBT_TARGET_SCHEMA')}}"
     +quote_columns: false
 
 snapshots:
-  pc_dbt_cloud_demo:
+  data_analytics:
     +target_schema: "{{env_var('DBT_TARGET_SCHEMA')}}"
-    +target_database: dbt_cloud_snowflake_db
+    +target_database: "{{env_var('DBT_TARGET_DATABASE')}}"
 
 vars:
-  raw_database: dbt_cloud_snowflake_db
+  raw_database: "{{env_var('DBT_TARGET_DATABASE')}}"
   raw_schema: raw_pc

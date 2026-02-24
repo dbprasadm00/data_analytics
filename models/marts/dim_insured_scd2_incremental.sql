@@ -2,7 +2,8 @@
     materialized='incremental',
     incremental_strategy='merge',
     unique_key='insured_scd2_key',
-    schema='analytics'
+    schema='analytics',
+    static_analysis='unsafe'
 ) }}
 
 with src as (

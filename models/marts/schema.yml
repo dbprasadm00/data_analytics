@@ -20,10 +20,11 @@ models:
       - name: policy_status
         tests:
           - accepted_values:
-              values:
-                - "ACTIVE"
-                - "CANCELLED"
-                - "EXPIRED"
+              arguments:
+                values:
+                  - "ACTIVE"
+                  - "CANCELLED"
+                  - "EXPIRED"
 
   - name: stg_claim_payment
     columns:

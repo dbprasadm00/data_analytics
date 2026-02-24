@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: raw_pc
-    database: dbt_cloud_snowflake_db
+    database: "{{env_var('DBT_TARGET_DATABASE')}}"
     schema: raw_pc
     tables:
       - name: account
