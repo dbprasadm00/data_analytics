@@ -1,7 +1,6 @@
 {% snapshot snap_policy %}
 {{
   config(
-    target_database="{{env_var('DBT_TARGET_DATABASE')}}",
     target_schema='analytics',
     unique_key='policy_id',
     strategy='timestamp',
