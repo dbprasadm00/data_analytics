@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: fct_claim_payments
+    description: >
+      Claims Payments Data Product (Fact).
+      One row per claim payment, conformed with policy_id for reporting.
+    columns:
+      - name: payment_id
+        description: "Payment primary key."
+        tests:
+          - not_null
+          - unique
+      - name: payment_ts
+        description: "Payment timestamp."
+        tests:
+          - not_null
+      - name: payment_amount
+        description: "Payment amount."
+        tests:
+          - not_null
+      - name: policy_id
+        description: "Policy identifier associated to the payment."
+        tests:
+          - not_null
+
+  - name: dim_policy
+    description: >
+      Policy Data Product (Dimension).
+      Policy header attributes for business analytics.
+    columns:
+      - name: policy_id
+        description: "Policy identifier."
+        tests:
+          - not_null
+          - unique
+      - name: policy_status
+        description: "Policy lifecycle status."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - "ACTIVE"
+                  - "CANCELLED"
+                  - "EXPIRED"
+      - name: written_premium
+        description: "Written premium value."
+        tests:
+          - not_null
+
+exposures:
+  - name: claims_payments_monthly_dashboard
+    type: dashboard
+    maturity: high
+    url: "https://example-bi-tool/dashboards/claims_payments_monthly"
+    description: >
+      Executive dashboard consuming governed metrics for Claims Payments.
+    owner:
+      name: "Claims Analytics Lead"
+      email: "claims-analytics-lead@company.com"
+    depends_on:
+      - ref('fct_claim_payments')
+      - ref('dim_policy')
