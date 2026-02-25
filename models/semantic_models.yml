@@ -1,0 +1,154 @@
+version: 2
+
+semantic_models:
+  - name: claim_payments
+    description: "Claims Payments semantic model for standardized KPI computation."
+    model: ref('fct_claim_payments')
+    defaults:
+      agg_time_dimension: payment_ts
+
+    entities:
+      - name: payment
+        type: primary
+        expr: payment_id
+      - name: policy
+        type: foreign
+        expr: policy_id
+
+    dimensions:
+      - name: payment_ts
+        type: time
+        expr: payment_ts
+        type_params:
+          time_granularity: day
+
+      - name: payment_type
+        type: categorical
+        expr: payment_type
+
+      - name: policy_id
+        type: categorical
+        expr: policy_id
+
+    measures:
+      - name: total_payment_amount
+        description: "Total paid amount."
+        expr: payment_amount
+        agg: sum
+
+      - name: average_payment_amount
+        description: "Average payment amount."
+        expr: payment_amount
+        agg: average
+
+      - name: payment_count
+        description: "Count of payments."
+        expr: payment_id
+        agg: count_distinct
+
+      - name: max_payment_amount
+        description: "Max payment amount."
+        expr: payment_amount
+        agg: max
+
+    metrics:
+      - name: total_payment_amount_metric
+        type: simple
+        type_params:
+          measure: total_payment_amount
+
+      - name: average_payment_amount_metric
+        type: simple
+        type_params:
+          measure: average_payment_amount
+
+      - name: payment_count_metric
+        type: simple
+        type_params:
+          measure: payment_count
+
+      - name: max_payment_amount_metric
+        type: simple
+        type_params:
+          measure: max_payment_amount
+
+  - name: policy_kpis
+    description: "Policy semantic model for standardized policy KPIs."
+    model: ref('dim_policy')
+
+    entities:
+      - name: policy
+        type: primary
+        expr: policy_id
+
+    dimensions:
+      - name: policy_status
+        type: categorical
+        expr: policy_status
+
+      - name: policy_id
+        type: categorical
+        expr: policy_id
+
+    measures:
+      - name: policy_count
+        description: "Count of policies."
+        expr: policy_id
+        agg: count_distinct
+
+      - name: active_policy_count
+        description: "Count of ACTIVE policies."
+        expr: "case when policy_status = 'ACTIVE' then policy_id else null end"
+        agg: count_distinct
+
+      - name: total_written_premium
+        description: "Sum of written premium."
+        expr: written_premium
+        agg: sum
+
+      - name: avg_written_premium
+        description: "Average written premium."
+        expr: written_premium
+        agg: average
+
+    metrics:
+      - name: policy_count_metric
+        type: simple
+        type_params:
+          measure: policy_count
+
+      - name: active_policy_count_metric
+        type: simple
+        type_params:
+          measure: active_policy_count
+
+      - name: total_written_premium_metric
+        type: simple
+        type_params:
+          measure: total_written_premium
+
+      - name: avg_written_premium_metric
+        type: simple
+        type_params:
+          measure: avg_written_premium
+
+saved_queries:
+  - name: monthly_payments_by_policy_status
+    description: >
+      Data product "published view" for monthly payment KPIs grouped by policy status.
+      Intended for dashboards and downstream apps.
+    query_params:
+      metrics:
+        - total_payment_amount_metric
+        - payment_count_metric
+      group_by:
+        - policy_kpis__policy_status
+      time:
+        time_dimension: claim_payments__payment_ts
+        grain: month
+    exports:
+      - name: monthly_payments_by_policy_status_export
+        enabled: true
+        export_as:
+          schema: analytics
+          table: monthly_payments_by_policy_status_cache

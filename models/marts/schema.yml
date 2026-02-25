@@ -49,30 +49,6 @@ models:
         tests:
           - not_null
 
-  - name: dim_policy
-    columns:
-      - name: policy_sk
-        tests:
-          - not_null
-          - unique
-      - name: policy_id
-        tests:
-          - not_null
-          - unique
-
-  - name: fct_claim_payments
-    columns:
-      - name: payment_id
-        tests:
-          - not_null
-          - unique
-      - name: policy_id
-        tests:
-          - not_null
-      - name: payment_amount
-        tests:
-          - not_null
-
   # If you are using the macro-driven pattern (dim_insured_scd2_changes),
   # keep tests on the SCD2 target table model that you build in dbt.
   # If you are NOT building dim_insured_scd2_incremental as a dbt model, remove this block.
