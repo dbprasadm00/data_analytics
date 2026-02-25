@@ -34,15 +34,18 @@ models:
     staging:
       +transient: false
       +materialized: view
+      +database: "{{env_var('DBT_TARGET_DATABASE')}}"
       +schema: "{{env_var('DBT_TARGET_SCHEMA')}}"
     marts:
       +transient: false
       +materialized: table
+      +database: "{{env_var('DBT_TARGET_DATABASE')}}"
       +schema: "{{env_var('DBT_TARGET_SCHEMA')}}"
 
 seeds:
   data_analytics:
     +transient: false
+    +database: "{{env_var('DBT_TARGET_DATABASE')}}"
     +schema: "{{env_var('DBT_TARGET_SCHEMA')}}"
     +quote_columns: false
 
