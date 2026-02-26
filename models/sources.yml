@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: raw_pc
+    database: "{{env_var('DBT_TARGET_DATABASE')}}"
+    schema: raw_pc
+    tables:
+      - name: account
+      - name: policy
+      - name: insured
+      - name: claim
+      - name: claim_payment
